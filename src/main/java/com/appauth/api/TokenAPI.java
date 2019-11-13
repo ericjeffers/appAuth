@@ -36,6 +36,7 @@ public class TokenAPI {
 		if (username != null && username.length() > 0 
 				&& password != null && password.length() > 0 
 				&& checkPassword(username, password)) {
+			
 			Token token = createToken(username);
 			ResponseEntity<?> response = ResponseEntity.ok(token);
 			return response;			
@@ -46,28 +47,28 @@ public class TokenAPI {
 	}
 	
 	private boolean checkPassword(String username, String password) {
-
+		
 		// make call to customer service 
 		Customer cust = getCustomerByNameFromCustomerAPI(username);
 		
 		// compare name and password
 		if(cust != null && cust.getName().equals(username) && cust.getPassword().equals(password)) {
 			return true;				
-		}		
+		}
+		
 		return false;
 		
 	}
 	
 	private Customer getCustomerByNameFromCustomerAPI(String username) {
-		try {
-
+		try {			
 			URL url = new URL("http://localhost:8080/api/customers/byname/" + username);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 			Token token = getAppUserToken();
 			conn.setRequestProperty("authorization", "Bearer " + token.getToken());
-
+			
 			if (conn.getResponseCode() != 200) {
 				return null;
 			} else {
